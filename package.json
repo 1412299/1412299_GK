@@ -1,0 +1,42 @@
+{
+  "name": "react-firebase-chat",
+  "description": "A simple chat app based on react and firebase",
+  "keywords": "react firebase chat",
+  "homepage": "/",
+  "repository": "https://github.com/mrose/react-firebase-chat",
+  "bugs": "https://github.com/mrose/react-firebase-chat/issues",
+  "license": "MIT",
+  "version": "0.2.0",
+  "private": true,
+  "dependencies": {
+    "@babel/runtime": "7.1.2",
+    "@firebase/app-types": "0.1.2",
+    "@material-ui/core": "3.4.0",
+    "final-form": "4.4.0",
+    "firebase": "4.12.0",
+    "material-ui": "1.0.0-beta.38",
+    "material-ui-icons": "1.0.0-beta.36",
+    "moment": "2.21.0",
+    "prop-types": "15.6.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-final-form": "3.1.5",
+    "react-redux": "5.0.7",
+    "react-redux-firebase": "2.0.5",
+    "react-router-dom": "4.2.2",
+    "redux": "3.7.2",
+    "redux-devtools-extension": "2.13.2"
+  },
+  "devDependencies": {
+    "react-scripts": "1.1.1",
+    "redux-devtools": "3.4.1",
+    "redux-devtools-dock-monitor": "1.1.3",
+    "redux-devtools-log-monitor": "1.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
