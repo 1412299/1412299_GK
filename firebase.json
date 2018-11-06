@@ -11,17 +11,8 @@
     "public": "build",
     "ignore": [
       "firebase.json",
-      "database.rules.json",
       "**/.*",
-      "**/node_modules/**",
-      "**/public/**",
-      "**/src/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      "**/node_modules/**"
     ]
   }
 }
