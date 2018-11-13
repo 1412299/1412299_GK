@@ -8,7 +8,6 @@ import snapshotToArray from "./snapshotToArray";
 import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
 import Paper from "material-ui/Paper";
-import Checkbox from "material-ui/Checkbox";
 
 class Chat extends Component {
   constructor(props) {
@@ -26,11 +25,17 @@ class Chat extends Component {
     databaseRef.ref("users").on("value", snapshot => {
       let userList = snapshotToArray(snapshot);
       userList = userList.map(item => item.providerData[0]);
+      for (let i = 0; i < userList.length; i++) {
+        if (typeof userList[i]["bookMark"] === "undefined") {
+          userList[i]["bookMark"] = false;
+        }
+      }
+
       this.setState({
         allUser: userList,
         currentUser: this.props.user.providerData[0]
       });
-      // get user
+      // sort
       databaseRef
         .ref(`conversation/${this.state.currentUser.uid}`)
         .on("value", snapshot => {
@@ -100,10 +105,10 @@ class Chat extends Component {
       .ref(
         `conversation/${this.state.userChoose.uid}/${
           this.state.currentUser.uid
-        }/timeinfo`
+        }`
       )
       .child("lasttime")
-      .set(new Date().toISOString());
+      .set(new Date().valueOf());
   };
 
   getValueInput = evt => {
@@ -120,12 +125,27 @@ class Chat extends Component {
   };
 
   // bookMark
-  bookMark = uid => {
-    console.log(uid);
-  };
+  bookMark(e, uid) {
+    let allUser = [...this.state.allUser];
+    for (let i = 0; i < allUser; i++) {
+      if (allUser[i].uid === uid) {
+        // allUser[i]["bookMark"] = !;
+      }
+    }
+    // let allUser = this.state.allUser.map(item => {
+    //   return item.uid === uid
+    //     ? (item["bookMark"] = !item["bookMark"])
+    //     : (item["bookMark"] = false);
+    // });
+    console.log(allUser);
+    this.setState({
+      allUser: allUser
+    });
+
+    // console.log(this.state.allUser);
+  }
 
   render() {
-    console.log(this.state.newMessage);
     const RegExpImg = /(https?:\/\/.*\.(?:png|jpg))/i;
     // const RegExpImg = /fcd_[0-9]+_trajectory\.csv$/gm;
     return (
@@ -162,10 +182,14 @@ class Chat extends Component {
                           secondary={user.email}
                         />
                       </ListItem>
-                      <Checkbox
+                      {/* <Checkbox
                         onChange={this.bookMark("test")}
                         style={{ position: "absolute", right: 90, top: 15 }}
                         value="checkedA"
+                      /> */}
+                      <div
+                        className="bookMark"
+                        onClick={e => this.bookMark(e, user.uid)}
                       />
                     </div>
                   );
