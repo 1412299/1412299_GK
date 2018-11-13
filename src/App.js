@@ -69,7 +69,6 @@ const App = props => {
   const auth =
     props.auth == null ? defaultAuth : { ...defaultAuth, ...props.auth };
   const isAuthed = auth.isLoaded && !auth.isEmpty;
-
   return (
     <Router>
       <div>
@@ -115,7 +114,9 @@ const App = props => {
                 render={() => <Chat user={profile} />}
               />
 
-              <Route render={() => <Redirect to="/chat" />} />
+              <Route
+                render={() => <Redirect to="/chat" user={props.profile} />}
+              />
             </Switch>
           ) : (
             <Switch>
