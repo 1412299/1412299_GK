@@ -11,3 +11,9 @@
 .list_room li {
   cursor: pointer;
 }
+
+.MuiBadge-badge-124 {
+  top: 35px !important;
+  right: 90px !important;
+  cursor: pointer;
+}

@@ -94,7 +94,7 @@ const App = props => {
               variant="subheading"
               color="inherit"
             >
-              {profile.displayName}
+              {profile.displayName.toUpperCase()}
             </Typography>
             {isAuthed ? (
               <Button onClick={handleSignout(firebase)} color="inherit">

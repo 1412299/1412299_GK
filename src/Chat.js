@@ -7,6 +7,8 @@ import Avatar from "material-ui/Avatar";
 import snapshotToArray from "./snapshotToArray";
 import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
+import Paper from "material-ui/Paper";
+import Checkbox from "material-ui/Checkbox";
 
 class Chat extends Component {
   constructor(props) {
@@ -16,7 +18,8 @@ class Chat extends Component {
       currentUser: null,
       userChoose: null,
       message: [],
-      newMessage: ""
+      newMessage: "",
+      searchUser: ""
     };
   }
   componentDidMount() {
@@ -31,6 +34,9 @@ class Chat extends Component {
       databaseRef
         .ref(`conversation/${this.state.currentUser.uid}`)
         .on("value", snapshot => {
+          let userDB = snapshotToArray(snapshot);
+          console.log("allUser", this.state.allUser);
+          console.log("userDB", userDB);
           // filter all user have snapshot.key
           // let testUser = this.state.allUser.filter(
           //   item => item.uid === snapshot.key
@@ -97,7 +103,7 @@ class Chat extends Component {
         }/timeinfo`
       )
       .child("lasttime")
-      .set(new Date().toString());
+      .set(new Date().toISOString());
   };
 
   getValueInput = evt => {
@@ -107,79 +113,121 @@ class Chat extends Component {
     });
   };
 
-  searchUser = () => {
-    console.log("serach User");
+  searchUser = evt => {
+    this.setState({
+      searchUser: evt.target.value
+    });
   };
+
+  // bookMark
+  bookMark = uid => {
+    console.log(uid);
+  };
+
   render() {
     console.log(this.state.newMessage);
+    const RegExpImg = /(https?:\/\/.*\.(?:png|jpg))/i;
+    // const RegExpImg = /fcd_[0-9]+_trajectory\.csv$/gm;
     return (
       <div className="row chat">
-        <div className="col-md-5 list_room">
-          <TextField
-            id="outlined-with-placeholder"
-            label="Find User"
-            placeholder="Find User"
-            // className={classes.textField}
-            fullWidth
-            style={{ margin: "0px 0px 20px 20px", width: "300px" }}
-            onChange={this.searchUser}
-          />
-          <ul className="list-group">
-            {this.state.allUser.map(user => {
-              return (
-                <ListItem
-                  key={user.uid}
-                  onClick={e => this.createRoom(e, user)}
-                >
-                  <Avatar alt={user.displayName} src={user.photoURL} />
-                  <ListItemText
-                    primary={user.displayName}
-                    secondary={user.email}
-                  />
-                </ListItem>
-              );
-            })}
-          </ul>
+        <div className="col-md-4 list_room">
+          <Paper style={{ height: 550, overflow: "scroll" }}>
+            <TextField
+              id="outlined-with-placeholder"
+              label="Find User"
+              placeholder="Find User"
+              // className={classes.textField}
+              fullWidth
+              style={{ margin: "0px 0px 20px 20px", width: "300px" }}
+              onChange={this.searchUser}
+            />
+            <ul className="list-group">
+              {this.state.allUser
+                .filter(
+                  user =>
+                    user.displayName
+                      .toLowerCase()
+                      .indexOf(this.state.searchUser.toLowerCase()) !== -1
+                )
+                .map(user => {
+                  return (
+                    <div key={user.uid} style={{ position: "relative" }}>
+                      <ListItem
+                        onClick={e => this.createRoom(e, user)}
+                        key={user.uid}
+                      >
+                        <Avatar alt={user.displayName} src={user.photoURL} />
+                        <ListItemText
+                          primary={user.displayName}
+                          secondary={user.email}
+                        />
+                      </ListItem>
+                      <Checkbox
+                        onChange={this.bookMark("test")}
+                        style={{ position: "absolute", right: 90, top: 15 }}
+                        value="checkedA"
+                      />
+                    </div>
+                  );
+                })}
+            </ul>
+          </Paper>
         </div>
-        <div className="col-md-7 room">
+        <div className="col-md-8 ">
           {/* <input value={this.state.inputValue} onChange={this.getValueInput} />
           <button onClick={this.onSubmit}>Send</button> */}
           {this.state.userChoose ? (
-            <div>
+            <Paper
+              style={{
+                maxHeight: 460,
+                overflow: "scroll",
+                position: "relative"
+              }}
+            >
+              <h3 className="text-center" style={{ marginTop: 20 }}>
+                {`Room: ${this.state.userChoose.displayName.toUpperCase()}`}
+              </h3>
               <div>
                 {this.state.message.map(item => {
-                  console.log(item);
                   return (
                     <ListItem key={item.key}>
                       <Avatar alt={item.photoURL} src={item.photoURL} />
-                      <ListItemText
-                        primary={item.message}
-                        secondary={item.timestamp}
-                      />
+                      {RegExpImg.test(item.message) ? (
+                        <img src={item.message} />
+                      ) : (
+                        <ListItemText
+                          primary={item.message}
+                          secondary={item.timestamp}
+                        />
+                      )}
                     </ListItem>
                   );
                 })}
               </div>
+            </Paper>
+          ) : (
+            <h1 className="text-center">Welcome to chat Application</h1>
+          )}
+          {this.state.userChoose && (
+            <Paper
+              style={{ borderRadius: 10, marginTop: 25, paddingBottom: 12 }}
+            >
               <TextField
                 id="outlined-with-placeholder"
-                label="With placeholder"
-                placeholder="Placeholder"
-                // className={classes.textField}
-                margin="normal"
+                label="Send Message"
+                placeholder="Send Message"
+                color="nomal"
                 variant="outlined"
-                style={{ width: 500, marginRight: 20 }}
+                style={{ width: 700, marginRight: 20, marginLeft: 20 }}
                 onChange={this.getValueInput}
               />
               <Button
                 onClick={this.onSubmit}
-                color="primary"
-                style={{ backgroundColor: "##41e2f4" }}
+                style={{ backgroundColor: "#3f51b5", color: "#fff" }}
               >
                 Send
               </Button>
-            </div>
-          ) : (
-            <h1 className="center">Welcome to chat Application</h1>
+            </Paper>
           )}
         </div>
       </div>
