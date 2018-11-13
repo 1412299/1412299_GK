@@ -18,11 +18,11 @@ const fbConfig = {
 const rrfConfig = { userProfile: "users" };
 
 const initialState = {};
+firebase.initializeApp(fbConfig);
+
+export const databaseRef = firebase.database();
 
 function configure() {
-  // initialize firebase instance
-  firebase.initializeApp(fbConfig);
-
   let store;
   switch (process.env.NODE_ENV) {
     case "development":

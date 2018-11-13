@@ -1,0 +1,13 @@
+.chat {
+  border: 1px gray solid;
+  border-radius: 2px;
+  padding: 20px;
+  margin: 20px;
+}
+.room {
+  border: 1px #ccc solid;
+  border-radius: 2px;
+}
+.list_room li {
+  cursor: pointer;
+}

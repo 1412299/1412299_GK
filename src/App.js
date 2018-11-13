@@ -4,8 +4,6 @@ import CssBaseline from "material-ui/CssBaseline";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
-import Paper from "material-ui/Paper";
-import Grid from "material-ui/Grid";
 import Button from "material-ui/Button";
 import {
   BrowserRouter as Router,
@@ -13,14 +11,14 @@ import {
   Redirect,
   Switch
 } from "react-router-dom";
-import Chat from "./ChatContainer";
 import SignIn from "./SignInContainer";
 import chat from "./static/chat.png";
+import Chat from "./Chat";
 
 const styles = {
-  root: {
-    flexGrow: 1
-  },
+  // root: {
+  //   flexGrow: 1
+  // },
   flex: {
     flex: 1
   },
@@ -107,27 +105,25 @@ const App = props => {
           </Toolbar>
         </AppBar>
         <div className={classes.root}>
-          <Grid
-            style={styles.contentBodyGrid}
-            spacing={24}
-            container
-            justify="center"
-            alignItems="center"
-          >
-            <Paper style={styles.contentBodyPaper}>
-              {isAuthed ? (
-                <Switch>
-                  <Route exact path="/chat" component={Chat} />
-                  <Route render={() => <Redirect to="/chat" />} />
-                </Switch>
-              ) : (
-                <Switch>
-                  <Route exact path="/signin" component={SignIn} />
-                  <Route render={() => <Redirect to="/signin" />} />
-                </Switch>
-              )}
-            </Paper>
-          </Grid>
+          {/* <Paper style={styles.contentBodyPaper}> */}
+          {isAuthed ? (
+            <Switch>
+              {/* <Route exact path="/chat" component={Chat} /> */}
+              <Route
+                exact
+                path="/chat"
+                render={() => <Chat user={profile} />}
+              />
+
+              <Route render={() => <Redirect to="/chat" />} />
+            </Switch>
+          ) : (
+            <Switch>
+              <Route exact path="/signin" component={SignIn} />
+              <Route render={() => <Redirect to="/signin" />} />
+            </Switch>
+          )}
+          {/* </Paper> */}
         </div>
       </div>
     </Router>
