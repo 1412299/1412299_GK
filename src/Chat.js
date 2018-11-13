@@ -67,6 +67,7 @@ class Chat extends Component {
   }
 
   createRoom(e, userChoose) {
+    console.log(userChoose);
     let currentUser = this.state.currentUser;
     this.setState({
       userChoose
@@ -78,7 +79,7 @@ class Chat extends Component {
     //   room_id = `${userChoose.uid}_${currentUser.uid}`;
     // }
     databaseRef
-      .ref(`conversation/${currentUser.uid}/${userChoose.uid}`)
+      .ref(`conversation/${currentUser.uid}/${userChoose.providerData[0].uid}`)
       .on("value", snapshot => {
         let message = snapshotToArray(snapshot);
         // userList = userList.map(item => item.providerData);
@@ -95,9 +96,11 @@ class Chat extends Component {
 
   onSubmit = () => {
     console.log("onSubmit");
+    console.log(this.state.currentUser.uid);
+    console.log(this.state.userChoose.providerData[0].uid);
     databaseRef
       .ref(`conversation/${this.state.currentUser.uid}`)
-      .child(this.state.userChoose.uid)
+      .child(this.state.userChoose.providerData[0].uid)
       // .equalTo(this.state.currentRoom)
       .push({
         message: this.state.newMessage,
@@ -105,9 +108,9 @@ class Chat extends Component {
         timestamp: new Date().toString(),
         photoURL: this.state.currentUser.photoURL
       });
-
+    console.log("newMessage", this.state.newMessage);
     databaseRef
-      .ref(`conversation/${this.state.userChoose.uid}`)
+      .ref(`conversation/${this.state.userChoose.providerData[0].uid}`)
       .child(this.state.currentUser.uid)
       // .equalTo(this.state.currentRoom)
       .push({
@@ -119,7 +122,7 @@ class Chat extends Component {
 
     databaseRef
       .ref(
-        `conversation/${this.state.userChoose.uid}/${
+        `conversation/${this.state.userChoose.providerData[0].uid}/${
           this.state.currentUser.uid
         }`
       )
