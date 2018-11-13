@@ -24,10 +24,13 @@ class Chat extends Component {
   componentDidMount() {
     databaseRef.ref("users").on("value", snapshot => {
       let userList = snapshotToArray(snapshot);
-      userList = userList.map(item => item.providerData[0]);
+      console.log("userList", userList);
       for (let i = 0; i < userList.length; i++) {
         if (typeof userList[i]["bookMark"] === "undefined") {
-          userList[i]["bookMark"] = false;
+          databaseRef
+            .ref(`users/${userList[i].key}`)
+            .child("bookMark")
+            .set(false);
         }
       }
 
@@ -35,17 +38,30 @@ class Chat extends Component {
         allUser: userList,
         currentUser: this.props.user.providerData[0]
       });
-      // sort
+
+      // bookMark
+      let allUser = this.state.allUser;
+      let sortUser = [];
+      allUser.map(item => {
+        if (item["bookMark"]) {
+          sortUser.push(item);
+        }
+      });
+      allUser.map(item => {
+        if (item["bookMark"] === false) {
+          sortUser.push(item);
+        }
+      });
+      this.setState({
+        allUser: sortUser
+      });
+      // update new user to list user
       databaseRef
         .ref(`conversation/${this.state.currentUser.uid}`)
         .on("value", snapshot => {
           let userDB = snapshotToArray(snapshot);
           console.log("allUser", this.state.allUser);
           console.log("userDB", userDB);
-          // filter all user have snapshot.key
-          // let testUser = this.state.allUser.filter(
-          //   item => item.uid === snapshot.key
-          // );
         });
     });
   }
@@ -125,24 +141,34 @@ class Chat extends Component {
   };
 
   // bookMark
-  bookMark(e, uid) {
-    let allUser = [...this.state.allUser];
-    for (let i = 0; i < allUser; i++) {
-      if (allUser[i].uid === uid) {
-        // allUser[i]["bookMark"] = !;
+  async bookMark(e, user) {
+    console.log(user);
+    let bookMark;
+    await databaseRef
+      .ref(`users/${user.key}/bookMark`)
+      .on("value", snapshot => {
+        bookMark = !snapshot.val();
+      });
+    await databaseRef.ref(`users/${user.key}/bookMark`).set(bookMark);
+
+    console.log(this.state.allUser);
+    // change index
+    let allUser = this.state.allUser;
+    let sortUser = [];
+    allUser.map(item => {
+      if (item["bookMark"]) {
+        sortUser.push(item);
       }
-    }
-    // let allUser = this.state.allUser.map(item => {
-    //   return item.uid === uid
-    //     ? (item["bookMark"] = !item["bookMark"])
-    //     : (item["bookMark"] = false);
-    // });
-    console.log(allUser);
-    this.setState({
-      allUser: allUser
     });
 
-    // console.log(this.state.allUser);
+    allUser.map(item => {
+      if (item["bookMark"] === false) {
+        sortUser.push(item);
+      }
+    });
+    this.setState({
+      allUser: sortUser
+    });
   }
 
   render() {
@@ -165,31 +191,36 @@ class Chat extends Component {
               {this.state.allUser
                 .filter(
                   user =>
-                    user.displayName
+                    user.providerData[0].displayName
                       .toLowerCase()
                       .indexOf(this.state.searchUser.toLowerCase()) !== -1
                 )
                 .map(user => {
                   return (
-                    <div key={user.uid} style={{ position: "relative" }}>
+                    <div
+                      key={user.providerData[0].uid}
+                      style={{ position: "relative" }}
+                    >
                       <ListItem
                         onClick={e => this.createRoom(e, user)}
-                        key={user.uid}
+                        key={user.providerData[0].uid}
                       >
-                        <Avatar alt={user.displayName} src={user.photoURL} />
+                        <Avatar
+                          alt={user.providerData[0].displayName}
+                          src={user.providerData[0].photoURL}
+                        />
                         <ListItemText
-                          primary={user.displayName}
-                          secondary={user.email}
+                          primary={user.providerData[0].displayName}
+                          secondary={user.providerData[0].email}
                         />
                       </ListItem>
-                      {/* <Checkbox
-                        onChange={this.bookMark("test")}
-                        style={{ position: "absolute", right: 90, top: 15 }}
-                        value="checkedA"
-                      /> */}
                       <div
-                        className="bookMark"
-                        onClick={e => this.bookMark(e, user.uid)}
+                        className={
+                          "bookMark" +
+                          " " +
+                          (user.bookMark ? "background_red" : "no_background")
+                        }
+                        onClick={e => this.bookMark(e, user)}
                       />
                     </div>
                   );

@@ -29,3 +29,10 @@
   z-index: 900;
   cursor: pointer;
 }
+
+.background_red {
+  background-color: red;
+}
+.no_background {
+  background-color: white;
+}
